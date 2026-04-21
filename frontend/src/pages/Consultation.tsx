@@ -214,8 +214,21 @@ const Consultation: React.FC = () => {
     const record = `[${new Date().toLocaleString()}] ` + parts.join(' | ');
     try {
       const existing = await patientService.getById(patient.id);
-      const history = existing.data.medical_history ? existing.data.medical_history + '\n---\n' + record : record;
-      await patientService.update(patient.id, { first_name: patient.first_name, phone: patient.phone, medical_history: history });
+      const existingData = existing.data;
+      const history = existingData.medical_history ? existingData.medical_history + '\n---\n' + record : record;
+      await patientService.update(patient.id, {
+        first_name: existingData.first_name,
+        last_name: existingData.last_name,
+        email: existingData.email,
+        phone: existingData.phone,
+        gender: existingData.gender,
+        date_of_birth: existingData.date_of_birth,
+        address: existingData.address,
+        city: existingData.city,
+        emergency_phone: existingData.emergency_phone,
+        blood_group: existingData.blood_group,
+        medical_history: history,
+      });
       showAlert('success', 'Consultation saved successfully!');
       setPatient(null); setSearch('');
     } catch (e: any) { showAlert('error', e.response?.data?.detail || 'Failed to save'); }
